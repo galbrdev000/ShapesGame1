@@ -1,7 +1,7 @@
 import java.awt.*;
 
 public abstract class Entity {
-//test for online
+//test for online making a change
     private Game game;
     private Color color;
     private int x, y, width, height;
