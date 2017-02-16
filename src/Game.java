@@ -60,26 +60,24 @@ public class Game extends JPanel implements ActionListener, KeyListener{
     }
 
     public void init(){
-        timer = new Timer(1500/60, this);
+        int q = Stats.level*2000;
+        timer = new Timer(q/60, this);
         entities = new ArrayList<Entity>();
         entities.add(new Circle(Color.red, getWidth()/2, getHeight()/2, 20, this));
 
         for(int i = 0; i < squares; i++) {
             entities.add(new Food(Color.green, (int)(25 + (getWidth()-100)*Math.random()),
-                    (int) (25+ (getHeight()-50)*Math.random()),  30, 30, this));
+                    (int) (25+ (getHeight()-50)*Math.random()),  25, 25, this));
         }
 
         for(int i = 0; i < circles; i++){
             entities.add(new Circle(Color.blue, (int)(25 + (getWidth()-100)*Math.random()),
-                    (int) (25+ (getHeight()-50)*Math.random()),  30, this));
+                    (int) (25+ (getHeight()-50)*Math.random()),  20, this));
         }
         timer.start();
     }
 
     public void collisions(){
-        if(Stats.lives <= 0){
-            Stats.endGame();
-        }
         if(Stats.score >= Stats.count+5){
             circles ++;
             Stats.lives += 1;
@@ -113,7 +111,11 @@ public class Game extends JPanel implements ActionListener, KeyListener{
             printSimpleString("Level: " + String.valueOf(Stats.level), getWidth()/2, 150, 50, g);
             for (Entity obj : entities)
                 obj.paint(g);
+            if(Stats.lives <= 0) {
+                Stats.endGame();
+            }
         }
+
         else if(Stats.isMenu()){
             g.setColor(Color.RED);
             g.setFont(new Font("Serif", Font.BOLD, 32));
@@ -122,17 +124,21 @@ public class Game extends JPanel implements ActionListener, KeyListener{
             printSimpleString("Use the mouse to collect Green Squares", getWidth(), 0, 300, g);
             printSimpleString("Avoid the Blue Circles", getWidth(), 0, 400, g);
         }
+
         else if(Stats.isPause()){
             g.setColor(Color.RED);
             g.setFont(new Font("Serif", Font.BOLD, 32));
             printSimpleString("Press *P* to Resume", getWidth(), 0, 400, g);
 
         }
+
         else if(Stats.isEnd()){
             g.setColor(Color.RED);
             g.setFont(new Font("Serif", Font.BOLD, 32));
-            printSimpleString("GAME OVER...", getWidth(), 0, 300, g);
-            printSimpleString("Press * Space* to Try Again!!!", getWidth(), 0, 400, g);
+            printSimpleString("GAME OVER!", getWidth(), 0, 300, g);
+            printSimpleString("You Survived " +  Stats.level + " Levels!", getWidth(), 0, 400, g);
+            printSimpleString("You Scored " +  Stats.display + " Points", getWidth(), 0, 450, g);
+            printSimpleString("Press * Space* to Try Again!!!", getWidth(), 0, 500, g);
             timer.stop();
         }
     }

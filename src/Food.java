@@ -11,6 +11,5 @@ public class Food extends Entity{
 
        g.setColor(getColor());
         g.fillRect(getX(), getY(), getWidth(), getHeight());
-
    }
 }

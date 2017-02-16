@@ -11,6 +11,5 @@ public class Circle extends Entity{
 
         g.setColor(getColor());
         g.fillOval(getX(), getY(), getWidth(), getHeight());
-
     }
 }

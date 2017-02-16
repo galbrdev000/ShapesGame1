@@ -23,7 +23,6 @@ public abstract class Entity {
         }
     }
 
-    //GENERIC MOVE METHOD
     public void move(){
         double nextLeft = x + dx;
         double nextRight = x + width + dx;
