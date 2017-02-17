@@ -8,8 +8,9 @@ public class Game extends JPanel implements ActionListener, KeyListener{
 
     Timer timer;
     int positionX, positionY;
-    int squares= 5;
+    int squares = 5;
     int circles = 1;
+    int walls = 1;
 
     ArrayList<Entity> entities;
 
@@ -60,7 +61,7 @@ public class Game extends JPanel implements ActionListener, KeyListener{
     }
 
     public void init(){
-        int q = Stats.level*2000;
+        int q = Stats.level*2500;
         timer = new Timer(q/60, this);
         entities = new ArrayList<Entity>();
         entities.add(new Circle(Color.red, getWidth()/2, getHeight()/2, 20, this));
@@ -69,17 +70,27 @@ public class Game extends JPanel implements ActionListener, KeyListener{
             entities.add(new Food(Color.green, (int)(25 + (getWidth()-100)*Math.random()),
                     (int) (25+ (getHeight()-50)*Math.random()),  25, 25, this));
         }
-
         for(int i = 0; i < circles; i++){
             entities.add(new Circle(Color.blue, (int)(25 + (getWidth()-100)*Math.random()),
                     (int) (25+ (getHeight()-50)*Math.random()),  20, this));
         }
+        for(int i = 0; i < walls; i++){
+            entities.add(new Wall(Color.pink, (int)(25 + (getWidth()-100)*Math.random()),
+                    (int) (25+ (getHeight()-50)*Math.random()),  70, 10, this));
+        }
+
         timer.start();
     }
 
     public void collisions(){
+        int g = Stats.level+1;
         if(Stats.score >= Stats.count+5){
-            circles ++;
+           if(g == 2 || g == 4 || g == 6 || g == 7 || g == 8) {
+               circles++;
+           }
+           if(g == 3 || g == 6){
+               walls++;
+           }
             Stats.lives += 1;
             Stats.level += 1;
             Stats.count += 5;
@@ -96,6 +107,9 @@ public class Game extends JPanel implements ActionListener, KeyListener{
                     entities.remove(i);
                     Stats.lives--;
                     init();
+                }
+                else if(entities.get(i) instanceof Wall){
+
                 }
             }
         }
@@ -136,7 +150,7 @@ public class Game extends JPanel implements ActionListener, KeyListener{
             g.setColor(Color.RED);
             g.setFont(new Font("Serif", Font.BOLD, 32));
             printSimpleString("GAME OVER!", getWidth(), 0, 300, g);
-            printSimpleString("You Survived " +  Stats.level + " Levels!", getWidth(), 0, 400, g);
+            printSimpleString("You Survived " +  (Stats.level - 1) + " Levels!", getWidth(), 0, 400, g);
             printSimpleString("You Scored " +  Stats.display + " Points", getWidth(), 0, 450, g);
             printSimpleString("Press * Space* to Try Again!!!", getWidth(), 0, 500, g);
             timer.stop();

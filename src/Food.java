@@ -9,7 +9,7 @@ public class Food extends Entity{
    }
    public void paint(Graphics g){
 
-       g.setColor(getColor());
+        g.setColor(getColor());
         g.fillRect(getX(), getY(), getWidth(), getHeight());
    }
 }
