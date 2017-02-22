@@ -10,7 +10,6 @@ public class Game extends JPanel implements ActionListener{
     int positionX, positionY;
     int squares = 10;
     int circles = 1;
-    int triangles = 1;
 
     ArrayList<Entity> entities;
 
@@ -54,30 +53,30 @@ public class Game extends JPanel implements ActionListener{
         for(int i = 1; i < entities.size(); i++){
             entities.get(i).move();
         }
-
         repaint();
     }
 
     public void init(){
-        int q = Stats.level*2500;
+        int q = 0;
+        if(Stats.level <= 10) {
+            q = Stats.level * 2500;
+        }
         timer = new Timer(q/60, this);
-        if (Stats.level == 1 || Stats.level == 6) {
+        if (Stats.level == 1 || Stats.level == 5 || Stats.level == 9) {
             setBackground(Color.black);
         }
-        if (Stats.level == 2 || Stats.level == 7) {
+        if (Stats.level == 2 || Stats.level == 6 || Stats.level == 10) {
             setBackground(Color.CYAN);
         }
-        if (Stats.level == 3 || Stats.level == 8) {
+        if (Stats.level == 3 || Stats.level == 7 || Stats.level == 11) {
             setBackground(Color.DARK_GRAY);
         }
-        if (Stats.level == 4 || Stats.level == 9) {
-            setBackground(Color.ORANGE);
-        }
-        if (Stats.level == 5 || Stats.level == 10) {
+        if (Stats.level == 4 || Stats.level == 8 || Stats.level == 12) {
             setBackground(Color.WHITE);
         }
+
         entities = new ArrayList<Entity>();
-        entities.add(new Circle(Color.red, getWidth()/2, getHeight()/2, 20, this));
+        entities.add(new Circle(Color.red, getWidth()/2, getHeight()/2, Stats.radius, this));
 
         for(int i = 0; i < squares; i++) {
             entities.add(new Food(Color.green, (int)(25 + (getWidth()-100)*Math.random()),
@@ -87,23 +86,19 @@ public class Game extends JPanel implements ActionListener{
             entities.add(new Circle(Color.blue, (int)(25 + (getWidth()-100)*Math.random()),
                     (int) (25+ (getHeight()-50)*Math.random()),  20, this));
         }
-        for(int i = 0; i < triangles; i++){
-            entities.add(new Triangle(Color.pink, (int)(25 + (getWidth()-100)*Math.random()),
-                    (int) (25+ (getHeight()-50)*Math.random()),  70, 10, this));
-        }
-
         timer.start();
     }
 
     public void collisions(){
         int g = Stats.level+1;
         if(Stats.score >= Stats.count+10){
-           if(g == 2 || g == 4 || g == 6 || g == 8 || g == 10) {
+           if(g == 2 || g == 4 || g == 6 || g == 8 || g == 10 ||  g == 12 || g == 14 || g == 16 || g == 18 || g == 20) {
                circles++;
            }
            if(Stats.level > 10){
                circles = 1;
            }
+            Stats.radius+= 2;
             Stats.lives += 1;
             Stats.level += 1;
             Stats.count += 10;
@@ -113,11 +108,24 @@ public class Game extends JPanel implements ActionListener{
               if (entities.get(0).collides(entities.get(i))) {
                   if (entities.get(i) instanceof Food) {
                       entities.remove(i);
-                      Stats.score++;
-                      Stats.display++;
-                  } else if (entities.get(i) instanceof Circle) {
-                      entities.remove(i);
-                      init();
+                      if(Stats.isEnd() == false){
+                          Stats.score++;
+                          Stats.display++;
+                      }
+                  }
+                  else if (entities.get(i) instanceof Circle) {
+                      if(Stats.level <= 10) {
+                          entities.remove(i);
+                          Stats.lives--;
+                          Stats.radius -= 2;
+                          init();
+                      }
+                      if(Stats.level > 10) {
+                          entities.remove(i);
+                          Stats.lives -= 2;
+                          Stats.radius--;
+                          init();
+                      }
                   }
                  }
             }
@@ -133,7 +141,8 @@ public class Game extends JPanel implements ActionListener{
             printSimpleString("Level: " + String.valueOf(Stats.level), getWidth()/2, 200, 50, g);
             for (Entity obj : entities)
                 obj.paint(g);
-            if(Stats.lives <= 0) {
+            if(Stats.lives == 0 || Stats.level == 20) {
+                timer.stop();
                 Stats.endGame();
             }
         }
@@ -141,10 +150,15 @@ public class Game extends JPanel implements ActionListener{
         else if(Stats.isEnd()){
             g.setColor(Color.RED);
             g.setFont(new Font("Serif", Font.BOLD, 32));
-            printSimpleString("GAME OVER!", getWidth(), 0, 300, g);
-            printSimpleString("You Survived " +  (Stats.level - 1) + " Levels!", getWidth(), 0, 400, g);
-            printSimpleString("You Scored " +  Stats.display + " Points", getWidth(), 0, 450, g);
-            timer.stop();
+            if(Stats.lives == 0){
+                printSimpleString("GAME OVER!", getWidth(), 0, 300, g);
+                printSimpleString("You Survived " + (Stats.level - 1) + " Levels!", getWidth(), 0, 400, g);
+                printSimpleString("You Scored " + Stats.display + " Points", getWidth(), 0, 450, g);
+            }
+            if(Stats.level >= 20){
+                printSimpleString("YOU WIN!", getWidth(), 0, 300, g);
+                printSimpleString("You Scored " + Stats.display + " Points", getWidth(), 0, 400, g);
+            }
         }
     }
 
