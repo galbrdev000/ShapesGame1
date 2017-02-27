@@ -12,7 +12,6 @@ public class Game extends JPanel implements ActionListener{
     int circles = 1;
     int orbs = 0;
     int r = 800;
-    int q = 0;
     int x = 800;
 
     ArrayList<Entity> entities;
@@ -26,7 +25,6 @@ public class Game extends JPanel implements ActionListener{
                 super.mouseMoved(e);
                 positionX = e.getX();
                 positionY = e.getY();
-
             }
         });
 
@@ -51,7 +49,6 @@ public class Game extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         collisions();
         entities.get(0).playerMove();
         for(int i = 1; i < entities.size(); i++){
@@ -61,11 +58,8 @@ public class Game extends JPanel implements ActionListener{
     }
 
     public void init(){
-        if(Stats.level <= 10) {
-            q = Stats.level * 3000;
-        }
-        else{
-            q = Stats.level * 2000;
+        int q = Stats.level * 3000;
+        if(Stats.level > 10) {
             squares = 10;
         }
 
@@ -149,7 +143,6 @@ public class Game extends JPanel implements ActionListener{
                     entities.remove(i);
                     if (Stats.isEnd() == false) {
                         Stats.score++;
-                        Stats.display++;
                     }
                 }
                 else if (entities.get(i) instanceof Circle) {
@@ -157,16 +150,15 @@ public class Game extends JPanel implements ActionListener{
                         entities.remove(i);
                         Stats.lives--;
                         Stats.radius -= 2;
-                        init();
                     }
                     if (Stats.level >= 10 && Stats.level < 20) {
                         entities.remove(i);
                         Stats.lives -= 2;
                         Stats.radius--;
-                        init();
                     }
                 }
                 else if (entities.get(i) instanceof Orb){
+                    entities.remove(i);
                     if( x < 600){
                         x = x+ 200;
                     }
@@ -196,7 +188,7 @@ public class Game extends JPanel implements ActionListener{
              Stats.ballCount = 0;
          }
          if(Stats.scoreCount >= 50){
-             Stats.display++;
+             Stats.score++;
              Stats.scoreCount = 0;
          }
       }
@@ -208,10 +200,11 @@ public class Game extends JPanel implements ActionListener{
             int u = 32;
             g.setColor(Color.red);
             g.setFont(new Font("Serif", Font.BOLD, u));
-            printSimpleString("Score: " + String.valueOf(Stats.display), getWidth()/2, 450, 50, g);
+            printSimpleString("Score: " + String.valueOf(Stats.score), getWidth()/2, 450, 50, g);
             printSimpleString("Lives: " + String.valueOf(Stats.lives), getWidth()/2, -60, 50, g);
             printSimpleString("Level: " + String.valueOf(Stats.level), getWidth()/2, 200, 50, g);
             g.fillRect(0, 780, x, 30);
+            g.fillRect(250, 780, 300, 40);
             g.setColor(Color.white);
             printSimpleString("Timer" +  x + "/800", getWidth()/2, 200, 800, g);
             g.setColor(Color.red);
@@ -236,11 +229,11 @@ public class Game extends JPanel implements ActionListener{
             if(Stats.lives == 0 && Stats.level < 20){
                 printSimpleString("GAME OVER!", getWidth(), 0, 300, g);
                 printSimpleString("You Survived " + (Stats.level - 1) + " Levels!", getWidth(), 0, 400, g);
-                printSimpleString("You Scored " + Stats.display + " Points", getWidth(), 0, 450, g);
+                printSimpleString("You Scored " + Stats.score + " Points", getWidth(), 0, 450, g);
             }
             if(Stats.level == 20){
                 printSimpleString("YOU WIN!", getWidth(), 0, 300, g);
-                printSimpleString("You Scored " + Stats.display + " Points", getWidth(), 0, 400, g);
+                printSimpleString("You Scored " + Stats.score + " Points", getWidth(), 0, 400, g);
             }
         }
     }
